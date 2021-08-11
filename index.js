@@ -11,9 +11,10 @@ var gameeBoards = [];
 io.on("connection" , (socket) => {
 	console.log("user connected " + socket.id);
 	sockets.push(socket);
-	let rand = Math.random();
 	console.log("socket count: " + sockets.length);
 	console.log("searchers count: " + playersSearching.length);
+
+	let roomId = -1;
 
 	socket.on("match", () => {
 		console.log("match");	
@@ -25,12 +26,14 @@ io.on("connection" , (socket) => {
 				//console.log(enemy);
 				console.log(io.of("/").adapter.rooms);
 
-				let roomId = Array.from(io.of("/").adapter.rooms).length;
+				roomId = Array.from(io.of("/").adapter.rooms).length;
 
 				socket.join(roomId);
 				enemy.join(roomId);
 				console.log(io.of("/").adapter.rooms);
 				playersSearching.splice(playersSearching.indexOf(playersSearching[i]), 1);
+
+				let rand = Math.random();
 
 				let starter = Boolean(Math.floor(rand * 2)) ? socket.id : enemy.id;
 				let king = Boolean(Math.floor(rand * 2)) ? socket.id : enemy.id;
@@ -51,7 +54,7 @@ io.on("connection" , (socket) => {
 	
 	socket.on("put", (id) => {
 		console.log("put ");
-		// put choose
+		io.to(roomId).emit("player_put", {id: socket.id, boxId: id});
 	});
 
 	socket.on("disconnecting", () => {
