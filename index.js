@@ -3,9 +3,10 @@ const app = express();
 const server = require("http").createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
-
+	
 var sockets = [];
 var playersSearching = [];
+var gameeBoards = [];
 
 io.on("connection" , (socket) => {
 	console.log("user connected " + socket.id);
@@ -23,24 +24,30 @@ io.on("connection" , (socket) => {
 				let enemy = getSocket(playersSearching[i]);
 				//console.log(enemy);
 				console.log(io.of("/").adapter.rooms);
-				socket.join(1);
-				enemy.join(1);
+
+				let roomId = Array.from(io.of("/").adapter.rooms).length;
+
+				socket.join(roomId);
+				enemy.join(roomId);
 				console.log(io.of("/").adapter.rooms);
 				playersSearching.splice(playersSearching.indexOf(playersSearching[i]), 1);
 
 				let starter = Boolean(Math.floor(rand * 2)) ? socket.id : enemy.id;
 				let king = Boolean(Math.floor(rand * 2)) ? socket.id : enemy.id;
 
-				io.to(1).emit("startgame", {
+				//gameBoards[]
+
+				io.to(roomId).emit("startgame", {
 					starter: starter,
 					king: king
 				});
+				i = playersSearching.length;
 			}
 		} else {
 			playersSearching.push(socket.id);
 			console.log("searchers count: " + playersSearching.length);
 		}
-	});
+	});	
 	
 	socket.on("put", (id) => {
 		console.log("put ");

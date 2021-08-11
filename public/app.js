@@ -56,6 +56,8 @@ const drawBoard = () => {
 	});
 };
 
+const 
+
 const boxClicked = (e) => {
 	if(my_char == curr_player)
 	{
@@ -81,7 +83,28 @@ socket.on("game-over", err => {
 socket.on("startgame", (res) => {
 	startGame();
 	console.log(res);
+
 	// use king and starter to start the game
+
+	if(res.king == socket.id)
+	{
+		console.log("YOU ARE KING! DON'T GET SLAYED!")
+	}else {
+		console.log("YOU ARE THE KILLER! COVER YOURSELF TO KILL THE KING!");
+	}
+	
+	if(res.starter == socket.id)
+	{
+		console.log("You are starting. Be smart!");
+	} else {
+		console.log("Other player is starting...")
+	}
 });
+
+socket.on("player_put", res => {
+	if(res.id == socket.id) {
+		
+	}
+})
 
 //startGame();
