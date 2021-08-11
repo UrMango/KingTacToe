@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Lobster&family=Londrina+Solid:wght@100;300;400;900&family=Merienda:wght@400;700&display=swap');
+
+:root {
+	background-color: #0b0424;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	color: white;
+	font-family: 'Merienda', cursive;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+h1 {
+	font-size: 54px;
+	font-family: 'Lobster', cursive;
+
+}
+
+.container {
+	padding: 40px;
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+#gameboard {
+	width: 500px;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	margin-bottom: 20px;
+	margin-left: 45px;
+}
+
+.box {
+	height: 150px;
+	width: 150px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	background-color: transparent;
+}
+
+button {
+	padding: 10px 20px;
+	border-radius: 10px;
+	background-color: #221358;
+	color: white;
+	font-size: 50px;
+	font-family: 'Londrina Solid';
+	font-weight: 400;
+	border-color: white;
+	border-width: 5px;
+	border-style: solid;
+	transition: 200ms transform;
+}
+
+button:hover {
+	cursor: pointer;
+	transform: translateY(+5px);
+}
+
+/*.boardGraphics {
+	align-self: center;
+	stroke: white;
+	stroke-width: 3px;
+	stroke-dasharray: 102;
+	stroke-dashoffset: 0;
+	height: 100%;
+	width: 100%;
+	margin: auto;
+	padding-right: 1000px;
+    z-index: 0;
+	position: absolute;
+    left: 45vw;
+    right: 0;
+    top: 0;
+}*/
+
