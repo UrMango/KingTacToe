@@ -91,6 +91,7 @@ socket.on("startgame", (res) => {
 		console.log("YOU ARE KING! DON'T GET SLAYED!")
 	}else {
 		console.log("YOU ARE THE KILLER! COVER YOURSELF TO KILL THE KING!");
+		//
 	}
 	
 	if(res.starter == socket.id)
