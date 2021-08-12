@@ -6,17 +6,25 @@ const consts = {
 	o: 1,
 	king: 2,
 	slayer: 3,
-	kingAvt: "assets/characters/king.png",
-	enemyAvt: "assets/characters/enemy.png"
+	kingAvt: "/assets/characters/king.png",
+	knightAvt: "/assets/characters/knight.png",
+	enemyAvt: "/assets/characters/knife.png"
 } 
 
 var spaces = [consts.empty, consts.empty, consts.empty, consts.empty, consts.empty, consts.empty, consts.empty, consts.empty, consts.empty];
 var curr_player = consts.empty;
 var my_char = consts.empty;
-var enemy_char = consts.empty;
-var steps = 0;
+var kingSteps = 0;
 var boxes;
 
+// preload
+
+let king = document.createElement("img").src = consts.kingAvt;
+let knight = document.createElement("img").src = consts.knightAvt;
+let enemy = document.createElement("img").src = consts.enemyAvt;
+king.style += "display: none;";
+knight.style += "display: none;";
+enemy.style += "display: none;";
 
 const startGame = () => {
 	document.querySelector(".gameBoardContainer").innerHTML = `<div id="gameboard">
@@ -127,12 +135,25 @@ socket.on("player_put", res => {
 	console.log(`player: ${res.id}, box: ${res.boxId}`);
 	if(res.id == socket.id) {
 		putCharacter(res.boxId, my_char);
+		spaces[res.boxId] = my_char;
 	} else {
 		putCharacter(res.boxId, enemy_char);
+		spaces[res.boxId] = enemy_char;
 	}
 })
 
-socket.io .on("reconnect", (attempt) => {
+socket.on("turn_change", res => {
+	if(res.to == socket.id)
+	{
+		console.log("It's your turn!");
+		curr_player = my_char;
+	} else {
+		console.log("enemy's turn...");
+		curr_player = enemy_char;
+	}
+})
+
+socket.io.on("reconnect", (attempt) => {
 	console.log("reconnect");
 	location.reload();
 })
@@ -152,8 +173,19 @@ const clearBoard = () => {
 
 const putCharacter = (boxId, char) => {
 	let box = document.getElementById(boxId);
-
-	box.appendChild("");
+	let imgURL = "";
+	if(char == consts.king) {
+		kingSteps++;
+		if(kingSteps <= 1)
+			imgURL = consts.kingAvt;
+		else
+			imgURL = consts.knightAvt;
+	} else {
+		imgURL = consts.enemyAvt;
+	}
+	let img = document.createElement("img");
+	img.src = imgURL;
+	box.appendChild(img);
 }
 
 //startGame();

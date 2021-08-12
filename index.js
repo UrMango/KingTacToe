@@ -14,8 +14,6 @@ io.on("connection" , (socket) => {
 	console.log("socket count: " + sockets.length);
 	console.log("searchers count: " + playersSearching.length);
 
-	let roomId = -1;
-
 	socket.on("match", () => {
 		console.log("match");	
 		if(playersSearching.length > 0)
@@ -23,13 +21,21 @@ io.on("connection" , (socket) => {
 			for(let i = 0; i < playersSearching.length; i++) {
 				console.log("id search: " + playersSearching[i]);
 				let enemy = getSocket(playersSearching[i]);
+				
+				socket.other = enemy;
+				enemy.other = socket;
+
 				//console.log(enemy);
 				console.log(io.of("/").adapter.rooms);
 
-				roomId = Array.from(io.of("/").adapter.rooms).length;
-
+				let roomId = Array.from(io.of("/").adapter.rooms).length;
+				
 				socket.join(roomId);
 				enemy.join(roomId);
+
+				socket.roomId = roomId;
+				enemy.roomId = roomId;
+
 				console.log(io.of("/").adapter.rooms);
 				playersSearching.splice(playersSearching.indexOf(playersSearching[i]), 1);
 
@@ -38,9 +44,20 @@ io.on("connection" , (socket) => {
 				let starter = Boolean(Math.floor(rand * 2)) ? socket.id : enemy.id;
 				let king = Boolean(Math.floor(rand * 2)) ? socket.id : enemy.id;
 
+				if(starter == socket.id) {
+					socket.turn = true;
+					enemy.turn = false;
+				}
+				else {
+					socket.turn = false;
+					enemy.turn = true;
+				}
+
+				console.log(socket.other.turn);
+
 				//gameBoards[]
 
-				io.to(roomId).emit("startgame", {
+				io.to(socket.roomId).emit("startgame", {
 					starter: starter,
 					king: king
 				});
@@ -53,8 +70,16 @@ io.on("connection" , (socket) => {
 	});	
 	
 	socket.on("put", (id) => {
-		console.log("put ");
-		io.to(roomId).emit("player_put", {id: socket.id, boxId: id});
+		console.log("put " + socket.id + " boxId: " + id);
+		console.log(socket.turn);
+		if(socket.turn == true)
+		{
+			console.log("it's turn")
+			io.to(socket.roomId).emit("player_put", {id: socket.id, boxId: id});
+			socket.turn = false;
+			socket.other.turn = true;
+			io.to(socket.roomId).emit("turn_change", {to: socket.other.id});
+		}
 	});
 
 	socket.on("disconnecting", () => {
@@ -99,4 +124,21 @@ app.get("/app.js", (req, res) => {
 app.get("/app.css", (req, res) => {
 	res.sendFile(__dirname + "/public/app.css");
 });
+
+app.get("/assets/characters/king.png", (req, res) => {
+	res.sendFile(__dirname + "/assets/characters/king.png");
+});
+
+app.get("/assets/characters/knight.png", (req, res) => {
+	res.sendFile(__dirname + "/assets/characters/knight.png");
+});
+
+app.get("/assets/characters/knife.png", (req, res) => {
+	res.sendFile(__dirname + "/assets/characters/knife.png");
+});
+
+app.get("/assets/bg/bg.png", (req, res) => {
+	res.sendFile(__dirname + "/assets/bg/bg.png");
+});
+
 server.listen(3000, () => console.log('server running...'))
