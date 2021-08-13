@@ -235,4 +235,8 @@ app.get("/assets/bg/bg.png", (req, res) => {
 	res.sendFile(__dirname + "/assets/bg/bg.png");
 });
 
+app.get("/assets/story.png", (req, res) => {
+	res.sendFile(__dirname + "/assets/story.png");
+});
+
 server.listen(3000, () => console.log('server running...'))

@@ -193,6 +193,8 @@ const startMatch = () => {
 		socket.emit("match");
 		if(document.getElementById("endText"))
 			document.getElementById("endText").style = "display: none;";
+		if(document.getElementById("storyImg"))
+			document.getElementById("storyImg").style = "display: none;";
 		document.getElementById("playBtn").style = "display: none;";
 		let searchingText = document.createElement("h3");
 		searchingText.setAttribute("id", "loadingText");
