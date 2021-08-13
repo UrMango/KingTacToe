@@ -17,6 +17,8 @@ var my_char = consts.empty;
 var kingSteps = 0;
 var boxes;
 
+var match = false;
+
 // preload
 
 let king = document.createElement("img").src = consts.kingAvt;
@@ -88,35 +90,23 @@ socket.on("connect", () => {
 	console.log(socket.id);
 });
 
-socket.on("game-over", err => {
-	console.log("Game Over -> " + err);
-	// show error, clear board and un-display: none play button
 
-	spaces = [consts.empty, consts.empty, consts.empty, consts.empty, consts.empty, consts.empty, consts.empty, consts.empty, consts.empty];
-	curr_player = consts.empty;
-	my_char = consts.empty;
-	enemy_char = consts.empty;
-	steps = 0;
-
-	clearBoard();
-	startMatch();
-})
 
 socket.on("startgame", (res) => {
 	startGame();
 	console.log(res);
-
+	
 	document.getElementById("loadingText").remove();
 	
 	// use king and starter to start the game
-
+	
 	if(res.king == socket.id)
 	{
 		console.log("YOU ARE KING! DON'T GET SLAYED!")
 		my_char = consts.king;
 		enemy_char = consts.slayer;
 	}else {
-		console.log("YOU ARE THE SLAYER! COVER YOURSELF TO KILL THE KING!");
+		console.log("YOU ARE THE SLAYER! COVER YOURSELF TO KILL THE KING");
 		my_char = consts.slayer;
 		enemy_char = consts.king;
 	}
@@ -153,18 +143,73 @@ socket.on("turn_change", res => {
 	}
 })
 
+socket.on("game-over", err => {
+	console.log("Game Over -> " + err);
+	// show error, clear board and un-display: none play button
+
+	restVars();
+	clearBoard();
+	startMatch();
+})
+
+socket.on("game-end", res => {
+	
+	//clearBoard();
+	if(res.id == 1)
+	{
+		console.log("draw");
+	} else if(res.id == 0) {
+		if(res.winner == socket.id) {
+			console.log("you won!");
+			if(my_char == consts.king)
+				endText("You have survived!");
+			else
+				endText("You have killed the king!");
+		} else {
+			console.log("other player won the game... ");
+			if(my_char == consts.king)
+				endText("You've been slayed... Ya Garua!");
+			else
+				endText("You've been arrested by the king's knights...");
+		}
+	}
+	restVars();
+})
+
+socket.on("special", (special) => {
+	location.assign(special);
+});
+
 socket.io.on("reconnect", (attempt) => {
 	console.log("reconnect");
 	location.reload();
 })
 
 const startMatch = () => {
-	socket.emit("match");
-	document.getElementById("playBtn").style = "display: none;";
-	let searchingText = document.createElement("h3");
-	searchingText.setAttribute("id", "loadingText");
-	searchingText.textContent = "Searching for enemy...";
-	document.querySelector(".container").appendChild(searchingText);
+	kingSteps = 0;
+	if(match == false)
+	{
+		match = true;
+		socket.emit("match");
+		if(document.getElementById("endText"))
+			document.getElementById("endText").style = "display: none;";
+		document.getElementById("playBtn").style = "display: none;";
+		let searchingText = document.createElement("h3");
+		searchingText.setAttribute("id", "loadingText");
+		searchingText.textContent = "Searching for enemy...";
+		document.querySelector(".container").appendChild(searchingText);
+	}
+}
+
+const endText = (_text) => {
+	let playBtn = document.getElementById("playBtn");
+	playBtn.textContent = "Play again!";
+	playBtn.style = "display: block;";
+	let text = document.createElement("h3");
+	text.setAttribute("id", "endText");
+	text.textContent = _text;
+		
+	document.querySelector(".container").insertBefore(text, playBtn);
 }
 
 const clearBoard = () => {
@@ -186,6 +231,15 @@ const putCharacter = (boxId, char) => {
 	let img = document.createElement("img");
 	img.src = imgURL;
 	box.appendChild(img);
+}
+
+const restVars = () => {
+	match = false;
+	spaces = [consts.empty, consts.empty, consts.empty, consts.empty, consts.empty, consts.empty, consts.empty, consts.empty, consts.empty];
+	curr_player = consts.empty;
+	my_char = consts.empty;
+	enemy_char = consts.empty;
+	kingSteps = 0;	
 }
 
 //startGame();

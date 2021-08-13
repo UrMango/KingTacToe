@@ -30,6 +30,12 @@ h1 {
 	font-family: 'Merienda', cursive;
 }
 
+#endText {
+	font-size: 40px;
+	text-transform: uppercase;
+	font-family: 'Merienda', cursive;
+}
+
 .container {
 	padding: 40px;
 	height: 100vh;
