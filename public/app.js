@@ -72,7 +72,7 @@ const drawBoard = () => {
 
 
 const boxClicked = (e) => {
-	if(my_char == curr_player)
+	if(my_char == curr_player && my_char != consts.empty)
 	{
 		console.log("box: " + e.target.id + " was clicked");
 		const boxId = e.target.id;
@@ -158,6 +158,7 @@ socket.on("game-end", res => {
 	if(res.id == 1)
 	{
 		console.log("draw");
+		endText("No one of you is winning. Overthink it yourself. not my job haha");
 	} else if(res.id == 0) {
 		if(res.winner == socket.id) {
 			console.log("you won!");
