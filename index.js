@@ -239,4 +239,4 @@ app.get("/assets/story.png", (req, res) => {
 	res.sendFile(__dirname + "/assets/story.png");
 });
 
-server.listen(80, () => console.log('server running...'))
+server.listen(process.env.PORT, () => console.log("Server is running on port " + process.env.PORT + "!"))
